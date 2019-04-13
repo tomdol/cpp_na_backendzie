@@ -1,0 +1,14 @@
+.reveal { font-family: "Titillium Web Light" !important; }
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 { font-family: "Titillium Web ExtraLight"; margin-bottom: .5em !important; }
+.reveal section img { border: none; background: none; box-shadow: none; }
+.accent { color: #e7ad52 !important; }
+.gray { color: #666 !important; }
+.white {color: #FFF !important; }
+.small { font-size: 0.6em !important; }
+ul { list-style-type: square !important; }
+.loose { line-height: 2em !important; }
+.loose2 { line-height: 1.5em !important; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.flex-center > .loose {
+    margin: 1em;
+}

@@ -1,0 +1,630 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>C++ na backendzie</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/night.css">
+    <link rel="stylesheet" href="lib/css/github.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+          integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet"> 
+    <link rel="stylesheet" href="lib/css/tuning.css">
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <br><br><br>
+            <img src="lib/img/cpp_logo.png" style="width: 25%"><br>
+            na backendzie
+            <br><br><br>
+            <div class="accent"><small>Tomasz Dołbniak @ Tech.3camp #54</small></div>
+        </section>
+        <section>
+            <img src="lib/img/intel-ai-1.svg" style="width: 30%">
+            <div class="fragment flex-center">
+                <img src="lib/img/ngraph.png" style="width: 17%" class="loose">
+                <h3>+</h3>
+                <img src="lib/img/onnx.png" style="width: 10%" class="loose">
+            </div>
+            <br>
+            <span class="fragment">
+                <a href="https://www.linkedin.com/in/tomasz-dolbniak/"><i class="fab fa-linkedin"></i> tomasz-dolbniak</a><br><br>
+                <a href="https://github.com/tomdol"><i class="fab fa-github-square"></i> tomdol</a><br><br>
+            </span>
+        </section>
+        <section>
+            <section>
+                <h2>C++</h2>
+                <span class="fragment">trudny, dziwny, niskopoziomowy, przestarzały</span>
+                <div class="fragment small">
+                    <img src="lib/img/cpp-timeline.png" style="width: 70%"><br>
+                    <a class="accent">modernescpp.com/index.php/c-17-constructed-in-place</a>
+                </div>
+                <span class="fragment">uniwersalny, "multi-paradigm", nowoczesny</span>
+            </section>
+            <section>
+                <h2>Zastosowania</h2>
+                <div style="display: flex; width: 100%">
+                    <div style="flex: 1">
+                        <ul class="fragment fade-right">
+                            <li>Aplikacje desktopowe</li>
+                            <li>Systemy operacyjne</li>
+                            <li>medycyna, automotive</li>
+                            <li>gamedev</li>
+                            <li>Bankowość</li>
+                            <li>Inne języki - Java, node.js</li>
+                        </ul>
+                    </div>
+                    <div style="flex: 1">
+                        <ul class="fragment fade-left">
+                            <li>Bitcoin</li>
+                            <li>mission & safety critical</li>
+                            <li>IOT</li>
+                            <li>AI, deep learning</li>
+                            <li>CERN</li>
+                            <li>NASA</li>
+                        </ul>
+                    </div>
+                </div>
+                <br>
+                <small class="fragment">
+                    <a href="https://hackr.io/blog/features-uses-applications-of-c-plus-plus-language">
+                        hackr.io/blog/features-uses-applications-of-c-plus-plus-language
+                    </a>
+                </small>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Jak się robi backend?</h2>
+                <h6 class="fragment fade-down">W WERSJI MINIMALNEJ</h6>
+                <h6 class="fragment fade-down">i hardkorowej</h6>
+                <br>
+                <h3 class="fragment fade-down accent">Model OSI - warstwa IV</h3>
+                <h3 class="fragment fade-down accent">Sockety</h3>
+            </section>
+            <section>
+                <h2>Backend na socketach</h2>
+                <pre><code data-trim="" class="cpp loose">
+int server_socket = socket(...);
+sockaddr addr = { IP + PORT };
+bind(server_socket, &addr);
+listen(server_socket);
+int connection_socket = accept(server_socket, ...);
+
+char buffer[1024] = {0};
+read(connection_socket, buffer, 1024);
+write(connection_socket, "Hello world");
+                </code></pre>
+            </section>
+        </section>
+        <section>
+            <h2>Backend na bazie HTTP</h2>
+            <h2 class="fragment accent">REST</h2>
+        </section>
+        <section>
+            <section>
+                <h2>Wysoki poziom</h2>
+                <ul>
+                    <li>node.js + Express</li>
+                    <li>C# + .NET</li>
+                    <li>Java</li>
+                    <li>Python + Django</li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Asynchroniczność</h2>
+                <div class="loose">
+                    <span class="fragment">W samym języku dopiero od C++11</span><br>
+                    <span class="fragment accent"><code>std::future</code></span><br>
+                    <span class="fragment accent"><code>std::async()</code></span><br>
+                    <span class="fragment accent"><code>std::promise</code></span><br>
+                    <span class="fragment">Wciąż brak <code>.then().then().then()</code></span><br>
+                </div>
+            </section>
+            <section>
+                <h2>Boost.Asio</h2>
+                <ul>
+                    <li class="fragment">Asynchroniczne "network & low level I/O"</li>
+                    <li class="fragment">Asynchroniczność bez wątków <span class="fragment">=> <span class="accent">proactor</span></span></li>
+                    <li class="fragment">Nie trzeba synchronizować wątków</li>
+                    <li class="fragment">Można podpiąć pulę wątków</li>
+                    <li class="fragment">coroutines</li>
+                    <li class="fragment">TCP, SSL, timery, porty szeregowe</li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>JSON</h2>
+                <span class="fragment accent"><i class="fab fa-github-square"></i> nlohmann/json</span><br><br>
+                <span class="fragment accent"><i class="fab fa-github-square"></i> Tencent/rapidjson</span><br><br>
+                <span class="fragment">72ms vs 8ms</span>
+            </section>
+            <section>
+                <h2>nlohmann/json</h2>
+                <div style="display: flex; width: 100%">
+                    <div style="flex: 2">
+<pre><code data-trim="" class="cpp loose2">
+json obj = {
+  {"pi", 3.141},
+  {"happy", true},
+  {"name", "Niels"},
+  {"nothing", nullptr},
+  {"answer", {
+    {"everything", 42}
+  }},
+  {"list", {1, 0, 2}},
+  {"object", {
+    {"curr", "USD"},
+    {"value", 42.99}
+  }}
+};</code></pre>
+                    </div>
+                    <div style="flex: 3">
+<pre><code data-trim="" class="cpp loose">
+auto j = json::parse("...");
+std::string s = j.dump();
+std::cout << j.dump(4) << std::endl;
+std::ifstream i("in.json");
+i >> j;
+std::ofstream o("out.json");
+o << j;
+</code></pre>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>RapidJSON</h2>
+<pre><code data-trim="" class="cpp loose2">
+const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
+Document d;
+d.Parse(json);
+
+Value& s = d["stars"];
+s.SetInt(s.GetInt() + 1);
+
+StringBuffer buffer;
+Writer&lt;StringBuffer&gt; writer(buffer);
+d.Accept(writer);
+
+std::cout << buffer.GetString() << std::endl;</code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Boost.Beast</h2>
+                <a href="https://github.com/boostorg/beast" class="fragment"><i class="fab fa-github-square"></i> boostorg/beast</a><br><br>
+                <span class="fragment">Vinnie Falco</span>
+            </section>
+            <section>
+                <h2>Boost.Beast</h2>
+                <ul>
+                    <li class="fragment">HTTP protocol level library</li>
+                    <li class="fragment">Abstrakcja protokołu HTTP - typy/klasy</li>
+                    <li class="fragment">message, headers, body, request, response, strumienie, bufory</li>
+                    <li class="fragment">Biblioteka helperów - read, write, parse, ...</li>
+                    <li class="fragment">WebSockets</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Klient</h2>
+                <pre><code data-trim="" class="cpp loose">
+http::request&lt;empty_body&gt; req;
+req.version(11);   // HTTP/1.1
+req.method(verb::get);
+req.target("/index.htm");
+req.set(field::accept, "text/html");
+req.set(field::user_agent, "Beast");
+http::write(socket, req);</code></pre>
+            </section>
+            <section>
+                <h2>Serwer</h2>
+                <pre><code data-trim="" class="cpp loose">
+response&lt;string_body&gt; res;
+res.version(11);   // HTTP/1.1
+res.result(status::ok);
+res.set(field::server, "Beast");
+res.body() = "Hello, world!";
+res.prepare_payload();
+http::async_write(socket, res, done_callback);</code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Wyższy poziom</h2>
+                <ul>
+                    <li>Routing</li>
+                    <li>Standardowe nagłówki</li>
+                    <li>Kontrolowany load balancing</li>
+                    <li>Walidacja danych</li>
+                </ul>
+            </section>
+            <section>
+            <h2>Wyższy poziom w C++</h2>
+                <ul>
+                    <li class="accent">pistache</li>
+                    <li class="accent">restinio</li>
+                    <li>cpprestsdk</li>
+                    <li>crow</li>
+                    <li>pion</li>
+                </ul>
+            </section>
+            <section>
+                <h3>restinio - router</h3>
+                <pre><code class="cpp loose">
+restinio::router::express_router_t&lt;&gt; router{};
+router.http_get("/single/:param", []( auto req, auto params) {
+  return
+    init_resp(req->create_response())
+      .set_body(
+        fmt::format(
+          "GET request with single parameter: '{}'",
+          params["param"]))
+      .done();
+});
+                </code></pre>
+            </section>
+            <section>
+                <h3>restinio</h3>
+                <pre><code class="cpp loose">
+restinio::run(
+    restinio::on_this_thread< traits_t >()
+        .address( "localhost" )
+        .request_handler( router ) // <- tu jest
+        .read_next_http_message_timelimit( 10s )
+        .write_http_response_timelimit( 1s )
+        .handle_request_timeout( 1s ) );
+                </code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Gotowy serwer</h2>
+                <br>
+                <div style="display: flex">
+                    <div style="flex: 1">
+                        <img src="lib/img/Lighttpd_logo.svg" style="width: 45%">
+                    </div>
+                    <div style="flex: 1">
+                        <img src="lib/img/nginx.svg"  style="width: 40%">
+                    </div>
+                </div>
+            </section>
+            <section>
+                
+                <img src="lib/img/lighthttpd-sizes.png" style="width: 80%">
+            </section>
+            <section>
+                <h2>CGI</h2>
+                <ul>
+                    <li class="fragment">Wielojęzykowy protokół</li>
+                    <li class="fragment">HTTP, routing, SSL - w serwerze</li>
+                    <li class="fragment">Aplikacje konsolowe / skrypty</li>
+                    <li class="fragment">stdin + stdout</li>
+                    <li class="fragment">nagłówki i ścieżka -> ENV</li>
+                    <li class="fragment">1 zapytanie -> 1 proces</li>
+                </ul>
+            </section>
+            <section>
+                <h2>FastCGI</h2>
+                <ul>
+                    <li class="fragment">Procesy - workery</li>
+                    <li class="fragment">Dużo lżejsze</li>
+                    <li class="fragment">API w stylu C</li>
+                    <li class="fragment">Przypomina backend na socketach</li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Wnioski</h2>
+                <ul>
+                    <li class="fragment">Nie pisać backendu w C++</li>
+                    <li class="fragment">Dokładnie określić wymagania</li>
+                    <li class="fragment">Zrobić POC <span class="fragment">- minimum 2</span></li>
+                    <li class="fragment">Porównać technologie</li>
+                    <li class="fragment">Zmierzyć</li>
+                    <li class="fragment">Wyestymować rozwiązania</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Kiedy rozważyć C++?</h2>
+                <ul>
+                    <li class="fragment">Wydajność</li>
+                    <li class="fragment">Rozmiar</li>
+                    <li class="fragment">Platforma</li>
+                    <li class="fragment">Dostęp do sterowników, bibliotek, sytemu...</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Mieć ciastko i zjeść ciastko?</h2>
+                <ul>
+                    <li class="fragment">C++ bindings</li>
+                    <li class="fragment">"Wystawić" kod C++ do innego języka</li>
+                    <li class="fragment">"Critical path" w C++</li>
+                    <li class="fragment accent">node.js -> N-API</li>
+                    <li class="fragment">Java -> JNI</li>
+                    <li class="fragment">Python -> pybind11</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Przykłady</h2>
+                <div>
+                    <span class="accent"><i class="fab fa-github-square"></i> openbmc/bmcweb</span> - crow + Boost.Beast
+                </div>
+                <br>
+                <div>
+                    <span class="accent"><i class="fab fa-github-square"></i> intel/intelRSD</span> - microhttpd
+                </div>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Nie tylko REST</h2>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>WebSockets</h2>
+            </section>
+            <section>
+                <h2>Kiedy i po co?</h2>
+                <ul>
+                    <li>Realtime apps</li>
+                    <li>Low latency</li>
+                    <li>Full duplex</li>
+                    <li>Persistent connection</li>
+                </ul>
+            </section>
+            <section>
+                <h2>agar.io</h2>
+                <img src="lib/img/agario.png">
+            </section>
+            <section>
+                <h2>uWS</h2>
+                <span class="accent"><i class="fab fa-github-square"></i> uNetworking/uWebSockets</span><br><br>
+                <img src="lib/img/uws.png" style="width: 70%">
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Protocol Buffers</h2>
+            </section>
+            <section>
+                <blockquote cite="https://developers.google.com/protocol-buffers/docs/overview">
+                    Protocol buffers are a flexible, efficient, automated mechanism for serializing structured data – think XML, but smaller, faster, and simpler.
+                </blockquote>
+                <a class="small">https://developers.google.com/protocol-buffers/docs/overview</a>
+            </section>
+            <section>
+                <h2>Protobuf message</h2>
+                <pre><code class="protobuf loose2" data-trim="">
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+}
+                </code></pre>
+                <br>
+                <ul class="fragment fade-right">
+                    <li>Czytelne</li>
+                    <li>Proste</li>
+                    <li>Uniwersalne</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Uniwersalność</h2>
+                <div class="fragment fade-right loose">Oficjalne wsparcie: <span class="fragment highlight-red">C++</span>, C#, Dart, Go, Java, Python</div>
+                <div class="fragment fade-right loose">Nieoficjalne: JavaScript (<a href="npmjs.com">npmjs.com</a>)</div>
+                <div class="fragment fade-right loose"><span class="accent">protoc</span></div>
+            </section>
+            <section>
+                <h2>.proto -> C++</h2>
+                <span>protoc person.proto <span class="accent">--cpp_out=...</span></span>
+                <pre class="fragment fade-up"><code class="cpp loose2" data-trim="">
+Person kowalski;
+std::ifstream input("zapisany_kowalski.bin", std::ios::binary);
+kowalski.ParseFromIstream(&input);
+std::cout << kowalski.email();
+
+kowalski.set_id(5);
+std::ofstream out("kowalski_the_5th.bin", std::ios::binary);
+kowalski.SerializeToOstream(&out);
+                </code></pre>
+                <div class="fragment fade-up">rozmiar nawet <span class="accent">10x</span> mniejszy niż formaty tekstowe</div>
+                <div class="fragment fade-up">parsowanie nawet <span class="accent">100x</span> szybciej</div>
+            </section>
+            <section>
+                <h2>protobuf + gRPC</h2>
+                <pre><code class="protobuf loose2" data-trim="">
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+}
+
+message Request {
+  required int32 id = 1;
+}
+
+service People {
+  rpc GetPerson (Request) returns (Person) {}
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>Komunikacja gRPC</h2>
+                <img src="https://grpc.io/img/landing-2.svg" alt="">
+            </section>
+            <section>
+                <h2>OpenVINO™</h2>
+                <a href="https://github.com/IntelAI/OpenVINO-model-server"><i class="fab fa-github-square"></i> IntelAI/OpenVINO-model-server</a><br><br>
+                <div class="fragment">API gRPC</div>
+                <br>
+                <div class="fragment">Implementacja w pythonie</div>
+            </section>
+            <section>
+                <h2>Protobuf vs JSON</h2>
+            </section>
+            <section>
+                <img src="https://cdn.auth0.com/blog/protobuf-json/java-times.png" alt="">
+                <a href="https://auth0.com/blog/beating-json-performance-with-protobuf/" class="small">https://auth0.com/blog/beating-json-performance-with-protobuf</a>
+            </section>
+        </section>
+        <section>
+            <section>
+                <img src="lib/img/ngraph.png" style="width: 40%">
+                <h2>nGraph</h2>
+            </section>
+            <section>
+                <img src="lib/img/ngraph-diagram.png" alt="">
+            </section>
+            <section>
+                <img src="lib/img/ngraph-speedup.png" alt="">
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>C++ w chmurze</h2>
+            </section>
+            <section>
+                <h2>C++ AWS SDK</h2>
+                <ul>
+                    <li class="fragment">Od listopada 2018</li>
+                    <li class="fragment">Bardzo szybkie lambdy (serverless)</li>
+                    <li class="fragment">C++ API do DynamoDB</li>
+                    <li class="fragment">Wysyłanie emaili i SMS z C++</li>
+                    <li class="fragment">Obsługa plików w S3</li>
+                    <li class="fragment">Zarządzanie instancjami EC2</li>
+                </ul>
+                <br><br>
+                <a class="small fragment" href="https://aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime/">aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime</a>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>node.js vs c++</h2>
+            </section>
+            <section>
+                <h2>Wyjaśnienie</h2>
+                <p class="small">Pomimo, że node.js jest świetnym narzędziem i bardzo dobrze nadaje się do pisania większości backendów, kiepsko radzi sobie w przypadku operacji CPU-intensive.</p>
+                <p class="small">Niestety w przypadku operacji zajmujących dużo czasu, event loop blokuje się i napisany w ten sposób backend przestaje odpowiadać.</p>
+                <p class="small">C++ nadaje się do tego dużo lepiej i nawet w przypadku uruchomienia serwera C++ na jednym wątku, osiągamy znaczne przyspieszenie i dużo większą przepustowość.</p>
+            </section>
+            <section>
+                <h2>Program testowy</h2>
+                <p class="small">2 programy testowe, które znajdują się w tym repozytorium symulują operację wymagającą sporej ilości obliczeń.</p>
+                <p class="small">Oba robią to samo - wczytują obrazek z dysku (12MB plik bmp) i w sposób bardzo naiwny próbują go przeskalować kopiując bajt po bajcie wczytany obrazek N-razy, gdzie N oznacza skalę.</p>
+                <p class="small">Każdy request GET do takiego backendu uruchamia skalowanie. Serwer po zakończeniu zwraca ilość bajtów obrazka po przeskalowaniu.</p>
+            </section>
+            <section>
+                <h2>Testowanie i pomiary</h2>
+                <a href="https://github.com/wg/wrk"><i class="fab fa-github-square"></i> wg/wrk</a><br><br>
+                <p class="small">Oba serwery były testowane przez 10 sekund z użyciem 4 wątków i 100 połączeń symulowanych przez narzędzie wrk</p>
+                <pre><code class="text" data-trim="">
+wrk -t4 -c100 -d10s http://localhost:8888 -> node.js
+
+wrk -t4 -c100 -d10s http://localhost:9999 -> C++
+                </code></pre>
+            </section>
+            <section>
+                <h3>node.js</h3>
+                <img src="lib/img/perf/nodejs-console.png" style="width: 60%">
+                <br>
+                <img src="lib/img/perf/nodejs-sysmon.png" style="width: 50%">
+            </section>
+            <section>
+                <h3>C++</h3>
+                <div style="display: flex; width: 100%">
+                    <div style="flex: 1">
+                        <img src="lib/img/perf/cpp-1t-sysmon.png" style="width: 90%">
+                        <br><br>
+                        <div>wątki na serwerze: <br><span class="accent">1 vs 4 vs 8</span></div>
+                    </div>
+                    <div style="flex: 1">
+                        <img src="lib/img/perf/cpp-4t-sysmon.png" style="width: 90%">
+                        <br>
+                        <img src="lib/img/perf/cpp-8t-sysmon.png" style="width: 90%">
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h3>C++</h3>
+                <img src="lib/img/perf/cpp-console.png" style="width: 70%">
+            </section>
+            <section>
+                <h3>Mały komentarz</h3>
+                <p class="small">node.js był w stanie obsłużyć 8 żądań w ciągu całego testu, co daje przepustowość mniejszą niż 1 reqest na sekundę</p>
+                <p class="small">Nawet przy użyciu pojedynczego wątku po stronie backendu w C++ udało się osiągnąć przyspieszenie ponad <span class="accent">12x</span></p>
+                <p class="small">Uruchomienie z 4 i 8 wątkami daje kolejne przyrosty, ale pokazuje jednocześnie, że <span class="accent">Prawo Amdahla</span> działa i że przyspieszenie nie rośnie liniowo wraz ze wzrostem ilości wątków.</p>
+                <p class="small">Ponadto zużycie pamięci w przypadku node.js jest znacznie większe, co może wykluczać jego zastosowanie w sytuacjach, gdy dostępnego RAMu jest mało.</p>
+            </section>
+        </section>
+        <section>
+            <h3>Materiały</h3>
+            <div style="display: flex">
+                <div style="flex: 1">
+                    <h5 class="accent">YouTube</h5>
+                    <ul>
+                        <li>code::dive</li>
+                        <li>CppCon</li>
+                        <li>Meeting Cpp</li>
+                    </ul>
+                </div>
+                <div style="flex: 1">
+                    <h5 class="accent">Do czytania</h5>
+                    <ul>
+                        <li>cpp-polska.pl</li>
+                        <li>bfilipek.com</li>
+                        <li>akrzemi1.wordpress.com</li>
+                        <li>fluentcpp.com</li>
+                        <li>modernescpp.com</li>
+                        <li>isocpp.org</li>
+                        <li>reddit.com/r/cpp</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section>
+            <img src="lib/img/otoz-animals.png">
+            <h2>KRS 0000069730</h2>
+            <div class="accent">https://animalsi.otoz.pl/1procent</div>
+        </section>
+    </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+<!-- Printing and PDF exports -->
+<script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+<script>
+    Reveal.initialize({
+        controls: false,
+        transition: 'slide',
+        dependencies: [
+            { src: 'plugin/markdown/marked.js' },
+            { src: 'plugin/markdown/markdown.js' },
+            { src: 'plugin/notes/notes.js', async: true },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+            { src: 'plugin/zoom-js/zoom.js', async: true },
+        ]
+    });
+</script>
+</body>
+</html>
