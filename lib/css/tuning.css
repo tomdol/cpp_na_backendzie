@@ -1,5 +1,5 @@
 .reveal { font-family: "Titillium Web Light" !important; }
-.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 { font-family: "Titillium Web ExtraLight"; margin-bottom: .5em !important; }
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 { font-family: "Titillium Web ExtraLight" !important; margin-bottom: .5em !important; }
 .reveal section img { border: none; background: none; box-shadow: none; }
 .accent { color: #e7ad52 !important; }
 .gray { color: #666 !important; }
