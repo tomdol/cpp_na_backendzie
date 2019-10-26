@@ -20,72 +20,55 @@
 <div class="reveal">
     <div class="slides">
         <section>
-            <br><br><br>
-            <img src="lib/img/cpp_logo.png" style="width: 25%"><br>
-            na backendzie
-            <br><br><br>
-            <div class="accent"><small>Tomasz Dołbniak @ Tech.3camp #54</small></div>
-        </section>
-        <section>
-            <img src="lib/img/intel-ai-1.svg" style="width: 30%">
-            <div class="fragment flex-center">
-                <img src="lib/img/ngraph.png" style="width: 17%" class="loose">
-                <h3>+</h3>
-                <img src="lib/img/onnx.png" style="width: 10%" class="loose">
-            </div>
+            <br><br>
+            <img src="lib/img/cpp_logo.png" style="width: 30%"><br>
+            <h3>na backendzie</h3>
             <br>
-            <span class="fragment">
-                <a href="https://www.linkedin.com/in/tomasz-dolbniak/"><i class="fab fa-linkedin"></i> tomasz-dolbniak</a><br><br>
-                <a href="https://github.com/tomdol"><i class="fab fa-github-square"></i> tomdol</a><br><br>
-            </span>
+            <div class="accent small">
+                <i class="fas fa-user white"></i>&nbsp;&nbsp;Tomasz Dołbniak &nbsp;&nbsp;&nbsp;&nbsp;
+                <i class="fas fa-microphone white"></i>&nbsp;&nbsp;4developers offline &nbsp;&nbsp;&nbsp;&nbsp;
+                <i class="fas fa-map-marker-alt white"></i>&nbsp;&nbsp;Gdańsk 2019
+            </div>
         </section>
         <section>
             <section>
-                <h2>C++</h2>
-                <span class="fragment">trudny, dziwny, niskopoziomowy, przestarzały</span>
-                <div class="fragment small">
-                    <img src="lib/img/cpp-timeline.png" style="width: 70%"><br>
-                    <a class="accent">modernescpp.com/index.php/c-17-constructed-in-place</a>
+                <img src="lib/img/intel-ai-1.svg" style="width: 30%">
+                <br><br>
+                <div class="fragment">
+                    <div style="display: flex; justify-content: space-evenly">
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                            <img src="lib/img/ngraph.png" style="width: 14rem">
+                            <span>nGraph</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                            <img src="lib/img/onnx.png" style="width: 10rem">
+                            <span>ONNX</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                            <img src="lib/img/ONNX_Runtime_logo_dark.png" style="width: 10rem">
+                            <span>ONNXRuntime</span>                            
+                        </div>
+                    </div>
                 </div>
-                <span class="fragment">uniwersalny, "multi-paradigm", nowoczesny</span>
+                <br><br>
+                <span class="fragment">
+                    <a href="https://www.linkedin.com/in/tomasz-dolbniak/"><i class="fab fa-linkedin"></i> tomasz-dolbniak</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="https://github.com/tomdol"><i class="fab fa-github-square"></i> tomdol</a><br><br>
+                </span>
             </section>
             <section>
-                <h2>Zastosowania</h2>
-                <div style="display: flex; width: 100%">
-                    <div style="flex: 1">
-                        <ul class="fragment fade-right">
-                            <li>Aplikacje desktopowe</li>
-                            <li>Systemy operacyjne</li>
-                            <li>medycyna, automotive</li>
-                            <li>gamedev</li>
-                            <li>Bankowość</li>
-                            <li>Inne języki - Java, node.js</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1">
-                        <ul class="fragment fade-left">
-                            <li>Bitcoin</li>
-                            <li>mission & safety critical</li>
-                            <li>IOT</li>
-                            <li>AI, deep learning</li>
-                            <li>CERN</li>
-                            <li>NASA</li>
-                        </ul>
-                    </div>
-                </div>
-                <br>
-                <small class="fragment">
-                    <a href="https://hackr.io/blog/features-uses-applications-of-c-plus-plus-language">
-                        hackr.io/blog/features-uses-applications-of-c-plus-plus-language
-                    </a>
-                </small>
+                <h2>O czym to będzie?</h2>
+                <h3 class="fragment">Doświadczenia</h3>
+                <h3 class="fragment">Narzędzia</h3>
+                <h3 class="fragment">Abstrakcje</h3>
+                <h3 class="fragment">Materiały</h3>
             </section>
         </section>
         <section>
             <section>
                 <h2>Jak się robi backend?</h2>
                 <h6 class="fragment fade-down">W WERSJI MINIMALNEJ</h6>
-                <h6 class="fragment fade-down">i hardkorowej</h6>
+                <h6 class="fragment fade-down">minimum zależności - bardzo niski poziom abstrakcji</h6>
                 <br>
                 <h3 class="fragment fade-down accent">Model OSI - warstwa IV</h3>
                 <h3 class="fragment fade-down accent">Sockety</h3>
@@ -93,29 +76,72 @@
             <section>
                 <h2>Backend na socketach</h2>
                 <pre><code data-trim="" class="cpp loose">
-int server_socket = socket(...);
-sockaddr addr = { IP + PORT };
+int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+sockaddr addr = { /* IP + port */ };
 bind(server_socket, &addr);
 listen(server_socket);
-int connection_socket = accept(server_socket, ...);
+int connection_socket = accept(server_socket, &addr);
 
 char buffer[1024] = {0};
+// read(int fd, void *buf, size_t count);
 read(connection_socket, buffer, 1024);
-write(connection_socket, "Hello world");
+// write(int fd, const void *buf, size_t count);
+write(connection_socket, "Hello world", 11);
                 </code></pre>
             </section>
         </section>
         <section>
-            <h2>Backend na bazie HTTP</h2>
-            <h2 class="fragment accent">REST</h2>
+            <section>
+                <h2>Backend na bazie HTTP</h2>
+                <h3 class="fragment accent">Model OSI - warstwa VII</h3>
+                <h3 class="fragment">Wymaga niezawodności (reliability)</h3>
+                <h3 class="fragment">HTTP bazuje na TCP (warstwa IV)</h3>
+            </section>
+            <section>
+                <h2>Request HTTP</h2>
+                <pre><code data-trim="">
+POST /login HTTP/1.1
+Host: google.com
+User-Agent: Mozilla/5.0 Gecko/20100101 Firefox/70.0
+Accept: text/html
+Accept-Language: en-US,en;q=0.5
+Content-Length: 37
+
+{
+    login: "admin",
+    password: "admin"
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>Backend na bazie HTTP</h2>
+                <pre><code data-trim="">
+std::string request = "POST /login HTTP/1.1\nHost: (...)";
+
+write(socket, request.c_str(), request.length());
+                </code></pre>
+            </section>
+            <section>
+                <h2>REST</h2>
+                <h3 class="fragment">Bazuje na HTTP</h3>
+                <h3 class="fragment">"Architectural style"</h3>
+                <h3 class="fragment">Wymiana JSONów po HTTP</h3>
+                <h3 class="fragment accent">REST vs RESTful</h3>
+            </section>
+            <section>
+                <h1 style="margin-bottom: 0">tiny.cc/backendy</h1>
+                <img src="lib/img/survey_qrcode.png">
+                <h4>www.surveymonkey.com/r/RYS68VC</h4> 
+                <span class="fragment fade-up small"><a href="https://www.surveymonkey.com/stories/SM-HC9N67WL/" target="_blank">wyniki</a></span>
+            </section>
         </section>
         <section>
             <section>
-                <h2>Wysoki poziom</h2>
+                <h2>Typowe narzędzia do backendów REST</h2>
                 <ul>
-                    <li>node.js + Express</li>
-                    <li>C# + .NET</li>
+                    <li>node.js</li>
                     <li>Java</li>
+                    <li>C# + .NET</li>
                     <li>Python + Django</li>
                 </ul>
             </section>
@@ -129,17 +155,36 @@ write(connection_socket, "Hello world");
                     <span class="fragment accent"><code>std::async()</code></span><br>
                     <span class="fragment accent"><code>std::promise</code></span><br>
                     <span class="fragment">Wciąż brak <code>.then().then().then()</code></span><br>
+                    <div class="fragment" style="line-height: 75%">
+                        <a href="https://www.youtube.com/watch?v=5HWCsmE9DrE"><i class="fab fa-youtube"></i> How to make C++ run FASTER (with std::async)</a><br>
+                        <span class="small">www.youtube.com/watch?v=5HWCsmE9DrE</span>
+                    </div>
                 </div>
             </section>
             <section>
                 <h2>Boost.Asio</h2>
                 <ul>
-                    <li class="fragment">Asynchroniczne "network & low level I/O"</li>
-                    <li class="fragment">Asynchroniczność bez wątków <span class="fragment">=> <span class="accent">proactor</span></span></li>
+                    <li class="fragment">Async network & low level I/O</li>
+                    <li class="fragment">Asynchroniczność na jednym wątku <span class="fragment">=> <span class="accent">proactor</span></span></li>
                     <li class="fragment">Nie trzeba synchronizować wątków</li>
-                    <li class="fragment">Można podpiąć pulę wątków</li>
-                    <li class="fragment">coroutines</li>
+                    <li class="fragment">Można podpiąć pulę wątków - skalowalność</li>
+                    <li class="fragment">Obsługa coroutines</li>
                     <li class="fragment">TCP, SSL, timery, porty szeregowe</li>
+                </ul>
+                <br><br>
+                <div class="fragment" style="line-height: 75%">
+                    <a href="https://www.youtube.com/watch?v=rwOv_tw2eA4"><i class="fab fa-youtube"></i> Asynchronous IO with Boost.Asio</a><br>
+                    <span class="small">www.youtube.com/watch?v=rwOv_tw2eA4</span>
+                </div>
+            </section>
+            <section>
+                <h2>Boost.Asio</h2>
+                <h4>Kluczowe elementy</h4>
+                <ul>
+                    <li class="fragment">Wzorzec proactor</li>
+                    <li class="fragment">asio::io_service</li>
+                    <li class="fragment">asio::io_service::strand</li>
+                    <li class="fragment">buffers</li>
                 </ul>
             </section>
         </section>
@@ -385,10 +430,17 @@ restinio::run(
                     <li>Full duplex</li>
                     <li>Persistent connection</li>
                 </ul>
+                <br><br>
+                <div class="fragment">
+                    <a href="https://www.youtube.com/watch?v=bbbcZd4cuxg">youtube.com/watch?v=bbbcZd4cuxg</a>
+                    <br>
+                    <span class="small">(Embrace Modern Technology: Using HTML 5 for GUI in C++)</span>
+                </div>
             </section>
             <section>
                 <h2>agar.io</h2>
                 <img src="lib/img/agario.png">
+                <a href="https://news.ycombinator.com/item?id=9462967" class="small">news.ycombinator.com/item?id=9462967</a>
             </section>
             <section>
                 <h2>uWS</h2>
@@ -506,9 +558,55 @@ service People {
                     <li class="fragment">Wysyłanie emaili i SMS z C++</li>
                     <li class="fragment">Obsługa plików w S3</li>
                     <li class="fragment">Zarządzanie instancjami EC2</li>
+                    <li class="fragment"><a href="https://github.com/aws/aws-sdk-cpp"><i class="fab fa-github-square"></i> aws/aws-sdk-cpp</a></li>
                 </ul>
                 <br><br>
                 <a class="small fragment" href="https://aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime/">aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime</a>
+            </section>
+            <section>
+                <h2>AWS Lambda w C++</h2>
+                <a href="https://github.com/awslabs/aws-lambda-cpp"><i class="fab fa-github-square"></i> awslabs/aws-lambda-cpp</a><br><br>
+                <ul class="fragment">
+                    <li>Boilerplate</li>
+                    <li>Przykłady</li>
+                    <li>Buildsystem</li>
+                    <li>Testy</li>
+                </ul>
+            </section>
+            <section>
+                <h2>AWS Lambda w C++</h2>
+                <pre><code data-trim="" class="cpp">
+#include &lt;aws/lambda-runtime/runtime.h&gt;
+
+using handler_t = 
+  std::function&lt;invocation_response(const invocation_request&)&gt;;
+
+int main()
+{
+    run_handler(/* handler_t handler */);
+    return 0;
+}
+</code></pre>
+            </section>
+            <section>
+                <h2>AWS Lambda handler</h2>
+                <pre><code data-trim="" class="cpp">
+#include &lt;aws/lambda-runtime/runtime.h&gt;
+
+using namespace aws::lambda_runtime;
+
+invocation_response 
+lambda_request_handler(const invocation_request& req)
+{
+  // req.payload -> std::string
+  if (req.payload.empty())
+    return invocation_response::failure("request payload empty",
+                                        "error_type");
+  else
+    return invocation_response::success("{ ... JSON ... }",
+                                        "application/json");
+}
+</code></pre>
             </section>
         </section>
         <section>
@@ -622,7 +720,7 @@ wrk -t4 -c100 -d10s http://localhost:9999 -> C++
             { src: 'plugin/markdown/marked.js' },
             { src: 'plugin/markdown/markdown.js' },
             { src: 'plugin/notes/notes.js', async: true },
-            { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+            { src: 'plugin/highlight/highlight.js', async: false, callback: function() { hljs.initHighlightingOnLoad(); } },
             { src: 'plugin/zoom-js/zoom.js', async: true },
         ]
     });

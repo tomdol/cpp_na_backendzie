@@ -21,8 +21,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-subst {
-  color: #333;
-  font-weight: bold;
+  color: rgb(79, 79, 233);
+  font-weight: bold !important;
 }
 
 .hljs-number,
@@ -30,7 +30,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 .hljs-variable,
 .hljs-template-variable,
 .hljs-tag .hljs-attr {
-  color: #008080;
+  color: #0e8383 !important;
 }
 
 .hljs-string,
@@ -52,7 +52,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 .hljs-type,
 .hljs-class .hljs-title {
   color: #458;
-  font-weight: bold;
+  font-weight: bold !important;
 }
 
 .hljs-tag,
@@ -94,6 +94,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   font-style: italic;
 }
 
-.hljs-strong {
-  font-weight: bold;
+.hljs-strong,
+.hljs-literal,
+.hljs-number {
+  font-weight: bold !important;
 }
