@@ -68,7 +68,7 @@
             <section>
                 <h2>Jak się robi backend?</h2>
                 <h6 class="fragment fade-down">W WERSJI MINIMALNEJ</h6>
-                <h6 class="fragment fade-down">minimum zależności - bardzo niski poziom abstrakcji</h6>
+                <h6 class="fragment fade-down">w czystym C++</h6>
                 <br>
                 <h3 class="fragment fade-down accent">Model OSI - warstwa IV</h3>
                 <h3 class="fragment fade-down accent">Sockety</h3>
@@ -83,11 +83,19 @@ listen(server_socket);
 int connection_socket = accept(server_socket, &addr);
 
 char buffer[1024] = {0};
-// read(int fd, void *buf, size_t count);
 read(connection_socket, buffer, 1024);
-// write(int fd, const void *buf, size_t count);
 write(connection_socket, "Hello world", 11);
                 </code></pre>
+            </section>
+            <section>
+                <h2>API niskiego poziomu</h2>
+                <pre><code data-trim="" class="cpp loose">
+int socket(int domain, int type, int protocol);
+read(int fd, void *buf, size_t count);
+write(int fd, const void *buf, size_t count);
+                </code></pre>
+                <img src="lib/img/low_level_api.png" style="width: 75%" class="fragment">
+                <div class="fragment" style="position: absolute; transform: rotate(-45deg); font-size: 20rem; font-weight: 800; width: 100%; margin-top: -40%; color: #FF0000">meh</div>
             </section>
         </section>
         <section>
@@ -286,15 +294,6 @@ http::async_write(socket, res, done_callback);</code></pre>
         </section>
         <section>
             <section>
-                <h2>Wyższy poziom</h2>
-                <ul>
-                    <li>Routing</li>
-                    <li>Standardowe nagłówki</li>
-                    <li>Kontrolowany load balancing</li>
-                    <li>Walidacja danych</li>
-                </ul>
-            </section>
-            <section>
             <h2>Wyższy poziom w C++</h2>
                 <ul>
                     <li class="accent">pistache</li>
@@ -386,11 +385,79 @@ restinio::run(
                 <h2>Kiedy rozważyć C++?</h2>
                 <ul>
                     <li class="fragment">Wydajność</li>
+                    <li class="fragment">Zużycie pamięci</li>
                     <li class="fragment">Rozmiar</li>
                     <li class="fragment">Platforma</li>
                     <li class="fragment">Dostęp do sterowników, bibliotek, sytemu...</li>
                 </ul>
             </section>
+        </section>
+        <section>
+            <section>
+                <h2>C++ w chmurze</h2>
+            </section>
+            <section>
+                <h2>C++ AWS SDK</h2>
+                <ul>
+                    <li class="fragment">Od listopada 2018</li>
+                    <li class="fragment">Bardzo szybkie lambdy (serverless)</li>
+                    <li class="fragment">C++ API do DynamoDB</li>
+                    <li class="fragment">Wysyłanie emaili i SMS z C++</li>
+                    <li class="fragment">Obsługa plików w S3</li>
+                    <li class="fragment">Zarządzanie instancjami EC2</li>
+                    <li class="fragment"><a href="https://github.com/aws/aws-sdk-cpp"><i class="fab fa-github-square"></i> aws/aws-sdk-cpp</a></li>
+                    <li class="fragment"><a href="https://www.youtube.com/watch?v=fm4Aa3Whwos"><i class="fab fa-youtube"></i> AWS SDK for C++ (fm4Aa3Whwos)</a></li>
+                </ul>
+                <br><br>
+                <a class="small fragment" href="https://aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime/">aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime</a>
+            </section>
+            <section>
+                <h2>AWS Lambda w C++</h2>
+                <a href="https://github.com/awslabs/aws-lambda-cpp"><i class="fab fa-github-square"></i> awslabs/aws-lambda-cpp</a><br><br>
+                <ul class="fragment">
+                    <li>Boilerplate</li>
+                    <li>Przykłady</li>
+                    <li>Buildsystem</li>
+                    <li>Testy</li>
+                </ul>
+            </section>
+            <section>
+                <h2>AWS Lambda w C++</h2>
+                <pre><code data-trim="" class="cpp">
+#include &lt;aws/lambda-runtime/runtime.h&gt;
+
+using handler_t = 
+  std::function&lt;invocation_response(const invocation_request&)&gt;;
+
+int main()
+{
+    run_handler(/* handler_t handler */);
+    return 0;
+}
+</code></pre>
+            </section>
+            <section>
+                <h2>AWS Lambda handler</h2>
+                <pre><code data-trim="" class="cpp">
+#include &lt;aws/lambda-runtime/runtime.h&gt;
+
+using namespace aws::lambda_runtime;
+
+invocation_response 
+lambda_request_handler(const invocation_request& req)
+{
+  // req.payload -> std::string
+  if (req.payload.empty())
+    return invocation_response::failure("request payload empty",
+                                        "error_type");
+  else
+    return invocation_response::success("{ ... JSON ... }",
+                                        "application/json");
+}
+</code></pre>
+            </section>
+        </section>
+        <section>
             <section>
                 <h2>Mieć ciastko i zjeść ciastko?</h2>
                 <ul>
@@ -532,172 +599,6 @@ service People {
                 <img src="https://cdn.auth0.com/blog/protobuf-json/java-times.png" alt="">
                 <a href="https://auth0.com/blog/beating-json-performance-with-protobuf/" class="small">https://auth0.com/blog/beating-json-performance-with-protobuf</a>
             </section>
-        </section>
-        <section>
-            <section>
-                <img src="lib/img/ngraph.png" style="width: 40%">
-                <h2>nGraph</h2>
-            </section>
-            <section>
-                <img src="lib/img/ngraph-diagram.png" alt="">
-            </section>
-            <section>
-                <img src="lib/img/ngraph-speedup.png" alt="">
-            </section>
-        </section>
-        <section>
-            <section>
-                <h2>C++ w chmurze</h2>
-            </section>
-            <section>
-                <h2>C++ AWS SDK</h2>
-                <ul>
-                    <li class="fragment">Od listopada 2018</li>
-                    <li class="fragment">Bardzo szybkie lambdy (serverless)</li>
-                    <li class="fragment">C++ API do DynamoDB</li>
-                    <li class="fragment">Wysyłanie emaili i SMS z C++</li>
-                    <li class="fragment">Obsługa plików w S3</li>
-                    <li class="fragment">Zarządzanie instancjami EC2</li>
-                    <li class="fragment"><a href="https://github.com/aws/aws-sdk-cpp"><i class="fab fa-github-square"></i> aws/aws-sdk-cpp</a></li>
-                </ul>
-                <br><br>
-                <a class="small fragment" href="https://aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime/">aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime</a>
-            </section>
-            <section>
-                <h2>AWS Lambda w C++</h2>
-                <a href="https://github.com/awslabs/aws-lambda-cpp"><i class="fab fa-github-square"></i> awslabs/aws-lambda-cpp</a><br><br>
-                <ul class="fragment">
-                    <li>Boilerplate</li>
-                    <li>Przykłady</li>
-                    <li>Buildsystem</li>
-                    <li>Testy</li>
-                </ul>
-            </section>
-            <section>
-                <h2>AWS Lambda w C++</h2>
-                <pre><code data-trim="" class="cpp">
-#include &lt;aws/lambda-runtime/runtime.h&gt;
-
-using handler_t = 
-  std::function&lt;invocation_response(const invocation_request&)&gt;;
-
-int main()
-{
-    run_handler(/* handler_t handler */);
-    return 0;
-}
-</code></pre>
-            </section>
-            <section>
-                <h2>AWS Lambda handler</h2>
-                <pre><code data-trim="" class="cpp">
-#include &lt;aws/lambda-runtime/runtime.h&gt;
-
-using namespace aws::lambda_runtime;
-
-invocation_response 
-lambda_request_handler(const invocation_request& req)
-{
-  // req.payload -> std::string
-  if (req.payload.empty())
-    return invocation_response::failure("request payload empty",
-                                        "error_type");
-  else
-    return invocation_response::success("{ ... JSON ... }",
-                                        "application/json");
-}
-</code></pre>
-            </section>
-        </section>
-        <section>
-            <section>
-                <h2>node.js vs c++</h2>
-                <a href="https://github.com/tomdol/3camp/tree/master/live_demo"><i class="fab fa-github-square"></i> tomdol/3camp/tree/master/live_demo</a>
-            </section>
-            <section>
-                <h2>Wyjaśnienie</h2>
-                <p class="small">Pomimo, że node.js jest świetnym narzędziem i bardzo dobrze nadaje się do pisania większości backendów, kiepsko radzi sobie w przypadku operacji CPU-intensive.</p>
-                <p class="small">Niestety w przypadku operacji zajmujących dużo czasu, event loop blokuje się i napisany w ten sposób backend przestaje odpowiadać.</p>
-                <p class="small">C++ nadaje się do tego dużo lepiej i nawet w przypadku uruchomienia serwera C++ na jednym wątku, osiągamy znaczne przyspieszenie i dużo większą przepustowość.</p>
-            </section>
-            <section>
-                <h2>Program testowy</h2>
-                <p class="small">2 programy testowe, które znajdują się w tym repozytorium symulują operację wymagającą sporej ilości obliczeń.</p>
-                <p class="small">Oba robią to samo - wczytują obrazek z dysku (12MB plik bmp) i w sposób bardzo naiwny próbują go przeskalować kopiując bajt po bajcie wczytany obrazek N-razy, gdzie N oznacza skalę.</p>
-                <p class="small">Każdy request GET do takiego backendu uruchamia skalowanie. Serwer po zakończeniu zwraca ilość bajtów obrazka po przeskalowaniu.</p>
-            </section>
-            <section>
-                <h2>Testowanie i pomiary</h2>
-                <a href="https://github.com/wg/wrk"><i class="fab fa-github-square"></i> wg/wrk</a><br><br>
-                <p class="small">Oba serwery były testowane przez 10 sekund z użyciem 4 wątków i 100 połączeń symulowanych przez narzędzie wrk</p>
-                <pre><code class="text" data-trim="">
-wrk -t4 -c100 -d10s http://localhost:8888 -> node.js
-
-wrk -t4 -c100 -d10s http://localhost:9999 -> C++
-                </code></pre>
-            </section>
-            <section>
-                <h3>node.js</h3>
-                <img src="lib/img/perf/nodejs-console.png" style="width: 60%">
-                <br>
-                <img src="lib/img/perf/nodejs-sysmon.png" style="width: 50%">
-            </section>
-            <section>
-                <h3>C++</h3>
-                <div style="display: flex; width: 100%">
-                    <div style="flex: 1">
-                        <img src="lib/img/perf/cpp-1t-sysmon.png" style="width: 90%">
-                        <br><br>
-                        <div>wątki na serwerze: <br><span class="accent">1 vs 4 vs 8</span></div>
-                    </div>
-                    <div style="flex: 1">
-                        <img src="lib/img/perf/cpp-4t-sysmon.png" style="width: 90%">
-                        <br>
-                        <img src="lib/img/perf/cpp-8t-sysmon.png" style="width: 90%">
-                    </div>
-                </div>
-            </section>
-            <section>
-                <h3>C++</h3>
-                <img src="lib/img/perf/cpp-console.png" style="width: 70%">
-            </section>
-            <section>
-                <h3>Mały komentarz</h3>
-                <p class="small">node.js był w stanie obsłużyć 8 żądań w ciągu całego testu, co daje przepustowość mniejszą niż 1 reqest na sekundę</p>
-                <p class="small">Nawet przy użyciu pojedynczego wątku po stronie backendu w C++ udało się osiągnąć przyspieszenie ponad <span class="accent">12x</span></p>
-                <p class="small">Uruchomienie z 4 i 8 wątkami daje kolejne przyrosty, ale pokazuje jednocześnie, że <span class="accent">Prawo Amdahla</span> działa i że przyspieszenie nie rośnie liniowo wraz ze wzrostem ilości wątków.</p>
-                <p class="small">Ponadto zużycie pamięci w przypadku node.js jest znacznie większe, co może wykluczać jego zastosowanie w sytuacjach, gdy dostępnego RAMu jest mało.</p>
-            </section>
-        </section>
-        <section>
-            <h3>Materiały</h3>
-            <div style="display: flex">
-                <div style="flex: 1">
-                    <h5 class="accent">YouTube</h5>
-                    <ul>
-                        <li>code::dive</li>
-                        <li>CppCon</li>
-                        <li>Meeting Cpp</li>
-                    </ul>
-                </div>
-                <div style="flex: 1">
-                    <h5 class="accent">Do czytania</h5>
-                    <ul>
-                        <li>cpp-polska.pl</li>
-                        <li>bfilipek.com</li>
-                        <li>akrzemi1.wordpress.com</li>
-                        <li>fluentcpp.com</li>
-                        <li>modernescpp.com</li>
-                        <li>isocpp.org</li>
-                        <li>reddit.com/r/cpp</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-        <section>
-            <img src="lib/img/otoz-animals.png">
-            <h2>KRS 0000069730</h2>
-            <div class="accent">https://animalsi.otoz.pl/1procent</div>
         </section>
     </div>
 </div>
