@@ -101,9 +101,12 @@ write(int fd, const void *buf, size_t count);
         <section>
             <section>
                 <h2>Backend na bazie HTTP</h2>
-                <h3 class="fragment accent">Model OSI - warstwa VII</h3>
-                <h3 class="fragment">Wymaga niezawodności (reliability)</h3>
-                <h3 class="fragment">HTTP bazuje na TCP (warstwa IV)</h3>
+                <ul>
+                    <li class="fragment">Protokół tekstowy</li>
+                    <li class="fragment accent">Model OSI - warstwa VII</li>
+                    <li class="fragment">HTTP bazuje na TCP (warstwa IV)</li>
+                    <li class="fragment">Wymaga niezawodności (reliability) - zapewniona przez protokół TCP</li>
+                </ul>
             </section>
             <section>
                 <h2>Request HTTP</h2>
@@ -170,6 +173,10 @@ write(socket, request.c_str(), request.length());
                 </div>
             </section>
             <section>
+                <h2>Coroutines</h2>
+                <a href="https://www.modernescpp.com/index.php/coroutines">modernescpp.com/index.php/coroutines</a>
+            </section>            
+            <section>
                 <h2>Boost.Asio</h2>
                 <ul>
                     <li class="fragment">Async network & low level I/O</li>
@@ -193,6 +200,7 @@ write(socket, request.c_str(), request.length());
                     <li class="fragment">asio::io_service</li>
                     <li class="fragment">asio::io_service::strand</li>
                     <li class="fragment">buffers</li>
+                    <li class="fragment">std::shared_ptr</li>
                 </ul>
             </section>
         </section>
@@ -257,17 +265,23 @@ std::cout << buffer.GetString() << std::endl;</code></pre>
             <section>
                 <h2>Boost.Beast</h2>
                 <a href="https://github.com/boostorg/beast" class="fragment"><i class="fab fa-github-square"></i> boostorg/beast</a><br><br>
-                <span class="fragment">Vinnie Falco</span>
+                <span class="fragment">Vinnie Falco</span><br><br>
+                <div class="fragment">
+                    <a href="https://www.youtube.com/watch?v=7FQwAjELMek"><i class="fab fa-youtube"></i> Get rich quick! Using Boost.Beast WebSockets and Networking TS</a><br>
+                    <span class="small">www.youtube.com/watch?v=7FQwAjELMek</span>
+                </div>
             </section>
             <section>
                 <h2>Boost.Beast</h2>
                 <ul>
                     <li class="fragment">HTTP protocol level library</li>
                     <li class="fragment">Abstrakcja protokołu HTTP - typy/klasy</li>
-                    <li class="fragment">message, headers, body, request, response, strumienie, bufory</li>
+                    <li class="fragment">message, headers, body(string_body, file_body, vector_body, ...), request, response, strumienie, bufory</li>
                     <li class="fragment">Biblioteka helperów - read, write, parse, ...</li>
                     <li class="fragment">WebSockets</li>
                 </ul>
+                <br><br>
+                <a href="https://www.boost.org/doc/libs/develop/libs/beast/doc/html/" class="fragment">www.boost.org/doc/libs/develop/libs/beast/doc/html</a>
             </section>
             <section>
                 <h2>Klient</h2>
