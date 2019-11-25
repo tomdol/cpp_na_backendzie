@@ -13,3 +13,7 @@ ul { list-style-type: square !important; }
 .flex-center > .loose {
     margin: 1em;
 }
+.slide-number {
+    background-color: #1A1A1A !important;
+    color: #777 !important;
+}

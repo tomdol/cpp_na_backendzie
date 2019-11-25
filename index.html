@@ -100,12 +100,13 @@ write(int fd, const void *buf, size_t count);
         </section>
         <section>
             <section>
-                <h2>Backend na bazie HTTP</h2>
+                <h2>HTTP</h2>
                 <ul>
                     <li class="fragment">Protokół tekstowy</li>
                     <li class="fragment accent">Model OSI - warstwa VII</li>
+                    <li class="fragment">HTTP nie definiuje sposobu przesyłania wiadomości</li>
+                    <li class="fragment">HTTP zakłada istnienie warstwy transportowej: "underlying & reliable"</li>
                     <li class="fragment">HTTP bazuje na TCP (warstwa IV)</li>
-                    <li class="fragment">Wymaga niezawodności (reliability) - zapewniona przez protokół TCP</li>
                 </ul>
             </section>
             <section>
@@ -134,29 +135,27 @@ write(socket, request.c_str(), request.length());
             </section>
             <section>
                 <h2>REST</h2>
-                <h3 class="fragment">Bazuje na HTTP</h3>
                 <h3 class="fragment">"Architectural style"</h3>
+                <h3 class="fragment">Bazuje na HTTP</h3>
                 <h3 class="fragment">Wymiana JSONów po HTTP</h3>
                 <h3 class="fragment accent">REST vs RESTful</h3>
             </section>
             <section>
-                <h1 style="margin-bottom: 0">tiny.cc/backendy</h1>
-                <img src="lib/img/survey_qrcode.png">
-                <h4>www.surveymonkey.com/r/RYS68VC</h4> 
-                <span class="fragment fade-up small"><a href="https://www.surveymonkey.com/stories/SM-HC9N67WL/" target="_blank">wyniki</a></span>
-            </section>
-        </section>
-        <section>
-            <section>
                 <h2>Typowe narzędzia do backendów REST</h2>
                 <ul>
-                    <li>node.js</li>
                     <li>Java</li>
                     <li>C# + .NET</li>
                     <li>Python + Django</li>
+                    <li>node.js</li>
                 </ul>
             </section>
         </section>
+        <!-- <section>
+            <h1 style="margin-bottom: 0">tiny.cc/backendy</h1>
+            <img src="lib/img/survey_qrcode.png">
+            <h4>www.surveymonkey.com/r/RYS68VC</h4> 
+            <span class="fragment fade-up small"><a href="https://www.surveymonkey.com/stories/SM-HC9N67WL/" target="_blank">wyniki</a></span>
+        </section> -->
         <section>
             <section>
                 <h2>Asynchroniczność</h2>
@@ -173,15 +172,50 @@ write(socket, request.c_str(), request.length());
                 </div>
             </section>
             <section>
-                <h2>Coroutines</h2>
+                <h2>Asynchroniczność</h2>
+                <pre><code class="loose">Request parse_request(std::string);
+std::vector&lt;Book&gt; get_books_from_db(Request);
+Response build_response(std::vector&lt;Book&gt;);
+void LibraryServer::send_response(Response);
+
+void BooksHandler::get(std::string req) {
+    std::async(parse_request)
+         .then(get_books_from_db)
+         .then(build_response)
+         .then(&LibraryServer::send_response);
+}</code></pre>
+            </section>
+            <section>
+                <h2>Asynchroniczność</h2>
+                <pre><code class="loose2 cpp">Image get_book_cover(size_t id);
+
+void ImagesHandler::get_book_covers(std::vector&lt;Book&gt; books) {
+    std::vector&lt;std::future&lt;Image&gt;&gt covers;
+    
+    for(const auto& book : books) {
+        covers.push_back(std::async(get_book_cover, book.id()));
+    }
+    
+    auto all_images_loaded = std::when_all(covers.begin(), 
+                                           covers.end());
+    
+    all_images_loaded.then(send_images);
+}</code></pre>
+            </section>
+            <section>
+                <h2>C++20</h2>
+                <a href="https://en.cppreference.com/w/cpp/experimental/concurrency">en.cppreference.com/w/cpp/experimental/concurrency</a>
+                <br><br>
                 <a href="https://www.modernescpp.com/index.php/coroutines">modernescpp.com/index.php/coroutines</a>
+                <br><br>
+                code::dive 2019 <br>
+                <a href="https://www.youtube.com/channel/UCU0Rt8VHO5-YNQXwIjkf-1g"><i class="fab fa-youtube"></i> channel/UCU0Rt8VHO5-YNQXwIjkf-1g</a>
             </section>            
             <section>
                 <h2>Boost.Asio</h2>
                 <ul>
                     <li class="fragment">Async network & low level I/O</li>
                     <li class="fragment">Asynchroniczność na jednym wątku <span class="fragment">=> <span class="accent">proactor</span></span></li>
-                    <li class="fragment">Nie trzeba synchronizować wątków</li>
                     <li class="fragment">Można podpiąć pulę wątków - skalowalność</li>
                     <li class="fragment">Obsługa coroutines</li>
                     <li class="fragment">TCP, SSL, timery, porty szeregowe</li>
@@ -275,6 +309,7 @@ std::cout << buffer.GetString() << std::endl;</code></pre>
                 <h2>Boost.Beast</h2>
                 <ul>
                     <li class="fragment">HTTP protocol level library</li>
+                    <li class="fragment">Bazuje na Boost.Asio</li>
                     <li class="fragment">Abstrakcja protokołu HTTP - typy/klasy</li>
                     <li class="fragment">message, headers, body(string_body, file_body, vector_body, ...), request, response, strumienie, bufory</li>
                     <li class="fragment">Biblioteka helperów - read, write, parse, ...</li>
@@ -305,22 +340,44 @@ res.body() = "Hello, world!";
 res.prepare_payload();
 http::async_write(socket, res, done_callback);</code></pre>
             </section>
+            <section>
+                <h2>Boost.Beast - minusy</h2>
+                <ul>
+                    <li class="fragment">Cały backend trzeba napisać samemu</li>
+                    <li class="fragment">Trzeba posługiwać się socketami - listen, accept, ...</li>
+                    <li class="fragment">Trzeba samemu obsługiwać połączenia i requesty</li>
+                    <li class="fragment">Trzeba samemu zadbać o load balancing</li>
+                    <li class="fragment">Trzeba bardzo dbać o "lifetime" obiektów</li>
+                </ul>
+                <br><br>
+                <a class="fragment" href="https://www.boost.org/doc/libs/develop/libs/beast/example/http/server/small/http_server_small.cpp">www.boost.org/doc/libs/develop/libs/beast/example/http/server/small/http_server_small.cpp</a>
+            </section>
         </section>
         <section>
             <section>
-            <h2>Wyższy poziom w C++</h2>
+                <h2>Wyższy poziom w C++</h2>
                 <ul>
-                    <li class="accent">pistache</li>
-                    <li class="accent">restinio</li>
-                    <li>cpprestsdk</li>
-                    <li>crow</li>
-                    <li>pion</li>
+                    <li><i class="fab fa-github-square"></i> Stiffstream/<span class="accent">restinio</span></li>
+                    <li><i class="fab fa-github-square"></i> oktal/<span class="accent">pistache</span></li>
+                    <li><i class="fab fa-github-square"></i> microsoft/cpprestsdk</li>
+                    <li><i class="fab fa-github-square"></i> ipkn/crow</li>
+                    <li><i class="fab fa-github-square"></i> splunk/pion (porzucony)</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Ficzery wyższego poziomu</h2>
+                <ul>
+                    <li class="fragment">Łatwe uruchomienie i konfiguracja serwera (wątki, timeouty, ...)</li>
+                    <li class="fragment accent">Rozbudowany router</li>
+                    <li class="fragment">Łatwa praca z nagłówkami HTTP</li>
+                    <li class="fragment">Serwowanie statycznych plików</li>
+                    <li class="fragment">Obsługa upload'u plików</li>
+                    <li class="fragment">Obsługa HTTPS i kompresji (gzip, deflate)</li>
                 </ul>
             </section>
             <section>
                 <h3>restinio - router</h3>
-                <pre><code class="cpp loose">
-restinio::router::express_router_t&lt;&gt; router{};
+                <pre><code class="cpp loose">restinio::router::express_router_t&lt;&gt; router{};
 router.http_get("/single/:param", []( auto req, auto params) {
   return
     init_resp(req->create_response())
@@ -329,13 +386,11 @@ router.http_get("/single/:param", []( auto req, auto params) {
           "GET request with single parameter: '{}'",
           params["param"]))
       .done();
-});
-                </code></pre>
+});</code></pre>
             </section>
             <section>
                 <h3>restinio</h3>
-                <pre><code class="cpp loose">
-restinio::run(
+                <pre><code class="cpp loose">restinio::run(
     restinio::on_this_thread< traits_t >()
         .address( "localhost" )
         .request_handler( router ) // <- tu jest
@@ -359,7 +414,7 @@ restinio::run(
                 </div>
             </section>
             <section>
-                
+                <h2>LIGHTTPD</h2>
                 <img src="lib/img/lighthttpd-sizes.png" style="width: 80%">
             </section>
             <section>
@@ -369,7 +424,7 @@ restinio::run(
                     <li class="fragment">HTTP, routing, SSL - w serwerze</li>
                     <li class="fragment">Aplikacje konsolowe / skrypty</li>
                     <li class="fragment">stdin + stdout</li>
-                    <li class="fragment">nagłówki i ścieżka -> ENV</li>
+                    <li class="fragment">nagłówki i ścieżka -> zmienne środowiskowe</li>
                     <li class="fragment">1 zapytanie -> 1 proces</li>
                 </ul>
             </section>
@@ -377,22 +432,27 @@ restinio::run(
                 <h2>FastCGI</h2>
                 <ul>
                     <li class="fragment">Procesy - workery</li>
-                    <li class="fragment">Dużo lżejsze</li>
+                    <li class="fragment">Dużo lżejsze niż CGI</li>
                     <li class="fragment">API w stylu C</li>
                     <li class="fragment">Przypomina backend na socketach</li>
                 </ul>
+            </section>
+            <section>
+                <h2>Backend @ embedded</h2>
+                <img src="lib/img/autro.png" style="width: 50%">
+                <br>
+                ARM @ 400MHz + 64MB RAM + karta SD
             </section>
         </section>
         <section>
             <section>
                 <h2>Wnioski</h2>
                 <ul>
-                    <li class="fragment">Nie pisać backendu w C++</li>
+                    <li class="fragment">Nie pisać backendu w C++ <span class="fragment accent">(od zera i w całości)</span></li>
                     <li class="fragment">Dokładnie określić wymagania</li>
-                    <li class="fragment">Zrobić POC <span class="fragment">- minimum 2</span></li>
-                    <li class="fragment">Porównać technologie</li>
+                    <li class="fragment">Zrobić proof of concept</li>
                     <li class="fragment">Zmierzyć</li>
-                    <li class="fragment">Wyestymować rozwiązania</li>
+                    <li class="fragment">Dopiero wtedy decydować</li>
                 </ul>
             </section>
             <section>
@@ -404,6 +464,27 @@ restinio::run(
                     <li class="fragment">Platforma</li>
                     <li class="fragment">Dostęp do sterowników, bibliotek, sytemu...</li>
                 </ul>
+            </section>
+            <section>
+                <h2>Mieć ciastko i zjeść ciastko?</h2>
+                <ul>
+                    <li class="fragment">C++ bindings</li>
+                    <li class="fragment">"Wystawić" kod C++ do innego języka</li>
+                    <li class="fragment">Obsłużyć "Critical path" w C++</li>
+                    <li class="fragment accent">node.js -> N-API</li>
+                    <li class="fragment">Java -> JNI</li>
+                    <li class="fragment">Python -> pybind11</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Przykłady backendów w C++</h2>
+                <div>
+                    <a href="https://github.com/openbmc/bmcweb"><span class="accent"><i class="fab fa-github-square"></i> openbmc/bmcweb</span></a> - crow + Boost.Beast
+                </div>
+                <br>
+                <div>
+                    <a href="https://github.com/intel/intelRSD"><span class="accent"><i class="fab fa-github-square"></i> intel/intelRSD</span></a> - microhttpd
+                </div>
             </section>
         </section>
         <section>
@@ -421,8 +502,8 @@ restinio::run(
                     <li class="fragment">Zarządzanie instancjami EC2</li>
                     <li class="fragment"><a href="https://github.com/aws/aws-sdk-cpp"><i class="fab fa-github-square"></i> aws/aws-sdk-cpp</a></li>
                     <li class="fragment"><a href="https://www.youtube.com/watch?v=fm4Aa3Whwos"><i class="fab fa-youtube"></i> AWS SDK for C++ (fm4Aa3Whwos)</a></li>
+                    <li class="fragment"><a href="https://open.spotify.com/episode/2qrpQktbRyJYPBYLv5STow?si=GNDJoIFcQa6QS_nHovpzRA"><i class="fab fa-spotify"></i> CppCast: AWS Lambda with Marco Magdy</a></li>
                 </ul>
-                <br><br>
                 <a class="small fragment" href="https://aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime/">aws.amazon.com/blogs/compute/introducing-the-c-lambda-runtime</a>
             </section>
             <section>
@@ -431,7 +512,7 @@ restinio::run(
                 <ul class="fragment">
                     <li>Boilerplate</li>
                     <li>Przykłady</li>
-                    <li>Buildsystem</li>
+                    <li>Buildsystem & deployment</li>
                     <li>Testy</li>
                 </ul>
             </section>
@@ -470,28 +551,18 @@ lambda_request_handler(const invocation_request& req)
 }
 </code></pre>
             </section>
-        </section>
-        <section>
             <section>
-                <h2>Mieć ciastko i zjeść ciastko?</h2>
-                <ul>
-                    <li class="fragment">C++ bindings</li>
-                    <li class="fragment">"Wystawić" kod C++ do innego języka</li>
-                    <li class="fragment">"Critical path" w C++</li>
-                    <li class="fragment accent">node.js -> N-API</li>
-                    <li class="fragment">Java -> JNI</li>
-                    <li class="fragment">Python -> pybind11</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Przykłady</h2>
-                <div>
-                    <span class="accent"><i class="fab fa-github-square"></i> openbmc/bmcweb</span> - crow + Boost.Beast
-                </div>
-                <br>
-                <div>
-                    <span class="accent"><i class="fab fa-github-square"></i> intel/intelRSD</span> - microhttpd
-                </div>
+                <h2>AWS Lambda - deployment</h2>
+                <pre><code>$ make aws-lambda-package-demo</code></pre>
+                <pre><code data-trim="">
+$ aws lambda create-function --function-name demo \
+  --role &lt;role ARN&gt; --runtime provided --timeout 15 \ 
+  --memory-size 128 --handler demo --zip-file fileb://demo.zip
+                </code></pre>
+                <pre><code data-trim="">
+$ aws lambda invoke --function-name demo \
+  --payload '{"answer": 42}' output.txt
+                </code></pre>
             </section>
         </section>
         <section>
@@ -506,9 +577,9 @@ lambda_request_handler(const invocation_request& req)
             <section>
                 <h2>Kiedy i po co?</h2>
                 <ul>
-                    <li>Realtime apps</li>
-                    <li>Low latency</li>
                     <li>Full duplex</li>
+                    <li>Low latency</li>
+                    <li>Realtime apps</li>
                     <li>Persistent connection</li>
                 </ul>
                 <br><br>
@@ -541,25 +612,11 @@ lambda_request_handler(const invocation_request& req)
             </section>
             <section>
                 <h2>Protobuf message</h2>
-                <pre><code class="protobuf loose2" data-trim="">
-message Person {
+                <pre><code class="protobuf loose2" data-trim="">message Person {
   required string name = 1;
   required int32 id = 2;
   optional string email = 3;
-}
-                </code></pre>
-                <br>
-                <ul class="fragment fade-right">
-                    <li>Czytelne</li>
-                    <li>Proste</li>
-                    <li>Uniwersalne</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Uniwersalność</h2>
-                <div class="fragment fade-right loose">Oficjalne wsparcie: <span class="fragment highlight-red">C++</span>, C#, Dart, Go, Java, Python</div>
-                <div class="fragment fade-right loose">Nieoficjalne: JavaScript (<a href="npmjs.com">npmjs.com</a>)</div>
-                <div class="fragment fade-right loose"><span class="accent">protoc</span></div>
+}</code></pre>
             </section>
             <section>
                 <h2>.proto -> C++</h2>
@@ -630,6 +687,7 @@ service People {
 <script>
     Reveal.initialize({
         controls: false,
+        slideNumber: 'c/t',
         transition: 'slide',
         dependencies: [
             { src: 'plugin/markdown/marked.js' },
