@@ -75,17 +75,16 @@
             </section>
             <section>
                 <h2>Backend na socketach</h2>
-                <pre><code data-trim="" class="cpp loose">
-int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+                <pre><code data-trim="" class="cpp loose">int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 sockaddr addr = { /* IP + port */ };
 bind(server_socket, &addr);
 listen(server_socket);
-int connection_socket = accept(server_socket, &addr);
-
-char buffer[1024] = {0};
-read(connection_socket, buffer, 1024);
-write(connection_socket, "Hello world", 11);
-                </code></pre>
+while(true) {
+    int connection_socket = accept(server_socket, &addr);
+    char buffer[1024] = {0};
+    read(connection_socket, buffer, 1024);
+    write(connection_socket, "Hello world", 11);
+}</code></pre>
             </section>
             <section>
                 <h2>API niskiego poziomu</h2>
@@ -106,7 +105,7 @@ write(int fd, const void *buf, size_t count);
                     <li class="fragment accent">Model OSI - warstwa VII</li>
                     <li class="fragment">HTTP nie definiuje sposobu przesyłania wiadomości</li>
                     <li class="fragment">HTTP zakłada istnienie warstwy transportowej: "underlying & reliable"</li>
-                    <li class="fragment">HTTP bazuje na TCP (warstwa IV)</li>
+                    <li class="fragment">HTTP bazuje na TCP (warstwa IV modelu OSI)</li>
                 </ul>
             </section>
             <section>
@@ -161,8 +160,8 @@ write(socket, request.c_str(), request.length());
                 <h2>Asynchroniczność</h2>
                 <div class="loose">
                     <span class="fragment">W samym języku dopiero od C++11</span><br>
-                    <span class="fragment accent"><code>std::future</code></span><br>
                     <span class="fragment accent"><code>std::async()</code></span><br>
+                    <span class="fragment accent"><code>std::future</code></span><br>
                     <span class="fragment accent"><code>std::promise</code></span><br>
                     <span class="fragment">Wciąż brak <code>.then().then().then()</code></span><br>
                     <div class="fragment" style="line-height: 75%">
@@ -187,7 +186,7 @@ void BooksHandler::get(std::string req) {
             </section>
             <section>
                 <h2>Asynchroniczność</h2>
-                <pre><code class="loose2 cpp">Image get_book_cover(size_t id);
+                <pre><code class="loose2 cpp">Image ImagesHandler::get_book_cover(size_t id);
 
 void ImagesHandler::get_book_covers(std::vector&lt;Book&gt; books) {
     std::vector&lt;std::future&lt;Image&gt;&gt covers;
@@ -199,17 +198,19 @@ void ImagesHandler::get_book_covers(std::vector&lt;Book&gt; books) {
     auto all_images_loaded = std::when_all(covers.begin(), 
                                            covers.end());
     
-    all_images_loaded.then(send_images);
+    all_images_loaded.then([&]() { send_images(covers); });
 }</code></pre>
             </section>
             <section>
                 <h2>C++20</h2>
                 <a href="https://en.cppreference.com/w/cpp/experimental/concurrency">en.cppreference.com/w/cpp/experimental/concurrency</a>
                 <br><br>
-                <a href="https://www.modernescpp.com/index.php/coroutines">modernescpp.com/index.php/coroutines</a>
+                <a class="fragment" href="https://www.modernescpp.com/index.php/coroutines">modernescpp.com/index.php/coroutines</a>
                 <br><br>
-                code::dive 2019 <br>
-                <a href="https://www.youtube.com/channel/UCU0Rt8VHO5-YNQXwIjkf-1g"><i class="fab fa-youtube"></i> channel/UCU0Rt8VHO5-YNQXwIjkf-1g</a>
+                <div class="fragment">
+                    code::dive 2019 <br>
+                    <a href="https://www.youtube.com/channel/UCU0Rt8VHO5-YNQXwIjkf-1g"><i class="fab fa-youtube"></i> channel/UCU0Rt8VHO5-YNQXwIjkf-1g</a>
+                </div>
             </section>            
             <section>
                 <h2>Boost.Asio</h2>
@@ -267,7 +268,7 @@ json obj = {
                     </div>
                     <div style="flex: 3">
 <pre><code data-trim="" class="cpp loose">
-auto j = json::parse("...");
+auto j = json::parse("{...}");
 std::string s = j.dump();
 std::cout << j.dump(4) << std::endl;
 std::ifstream i("in.json");
@@ -281,7 +282,7 @@ o << j;
             <section>
                 <h2>RapidJSON</h2>
 <pre><code data-trim="" class="cpp loose2">
-const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
+const char* json = "{...}";
 Document d;
 d.Parse(json);
 
@@ -324,7 +325,7 @@ std::cout << buffer.GetString() << std::endl;</code></pre>
 http::request&lt;empty_body&gt; req;
 req.version(11);   // HTTP/1.1
 req.method(verb::get);
-req.target("/index.htm");
+req.target("/index.html");
 req.set(field::accept, "text/html");
 req.set(field::user_agent, "Beast");
 http::write(socket, req);</code></pre>
@@ -344,8 +345,8 @@ http::async_write(socket, res, done_callback);</code></pre>
                 <h2>Boost.Beast - minusy</h2>
                 <ul>
                     <li class="fragment">Cały backend trzeba napisać samemu</li>
-                    <li class="fragment">Trzeba posługiwać się socketami - listen, accept, ...</li>
                     <li class="fragment">Trzeba samemu obsługiwać połączenia i requesty</li>
+                    <li class="fragment">Trzeba posługiwać się socketami - listen, accept, read, write</li>
                     <li class="fragment">Trzeba samemu zadbać o load balancing</li>
                     <li class="fragment">Trzeba bardzo dbać o "lifetime" obiektów</li>
                 </ul>
@@ -378,28 +379,58 @@ http::async_write(socket, res, done_callback);</code></pre>
             <section>
                 <h3>restinio - router</h3>
                 <pre><code class="cpp loose">restinio::router::express_router_t&lt;&gt; router{};
-router.http_get("/single/:param", []( auto req, auto params) {
-  return
-    init_resp(req->create_response())
-      .set_body(
-        fmt::format(
-          "GET request with single parameter: '{}'",
-          params["param"]))
-      .done();
+router.http_get("/books/:book_id", book_handler);
+router.http_get("/book_covers/:book_id", 
+                CoversHandler{'/path/to/images'});
+router.http_get(R"(/hashtags/:tag([a-z0-9]+)", cb);
+router.non_matched_request_handler(handler_404);
+</code></pre>
+            </section>
+            <section>
+                <h3>restinio - router</h3>
+                <pre><code class="cpp loose">using namespace restinio;
+router::express_router_t&lt;&gt; router{};
+router.http_get("/books/:book_id", [](auto req, auto params) {
+    const auto book_id = cast_to&lt;size_t&gt;(params["book_id"]);
+    const auto book_json = db.get_book(book_id);
+    
+    return init_resp(req->create_response())
+                .set_body(book_json.dump())
+                .done();
 });</code></pre>
             </section>
             <section>
-                <h3>restinio</h3>
+                <h3>restinio - serwer</h3>
                 <pre><code class="cpp loose">restinio::run(
-    restinio::on_this_thread< traits_t >()
-        .address( "localhost" )
-        .request_handler( router ) // <- tu jest
-        .read_next_http_message_timelimit( 10s )
-        .write_http_response_timelimit( 1s )
-        .handle_request_timeout( 1s ) );
-                </code></pre>
+    restinio::on_this_thread&lt;traits_t&gt;()
+        .address("localhost")
+        .request_handler(router)
+        .read_next_http_message_timelimit(10s)
+        .write_http_response_timelimit(1s)
+        .handle_request_timeout(1s)
+);</code></pre>
+            </section>
+            <section>
+                <h3>restinio - serwer wielowątkowy</h3>
+                <pre><code class="cpp loose">restinio::run(
+    restinio::on_thread_pool&lt;traits_t&gt;(8)
+        .address("localhost")
+        .request_handler(router)
+        .read_next_http_message_timelimit(10s)
+        .write_http_response_timelimit(1s)
+        .handle_request_timeout(1s)
+);</code></pre>
+            </section>
+            <section>
+                <h3>restinio - linki</h3>
+                <a href="https://stiffstream.com/en/products/restinio.html">stiffstream.com/en/products/restinio.html</a>
+                <br><br>
+                <a href="https://github.com/Stiffstream/restinio">github.com/Stiffstream/restinio</a>
+                <br><br>
+                <a href="https://bitbucket.org/sobjectizerteam/restinio/src/default/dev/sample/">bitbucket.org/sobjectizerteam/restinio/src/default/dev/sample/</a>
             </section>
         </section>
+        
         <section>
             <section>
                 <h2>Gotowy serwer</h2>
@@ -438,7 +469,7 @@ router.http_get("/single/:param", []( auto req, auto params) {
                 </ul>
             </section>
             <section>
-                <h2>Backend @ embedded</h2>
+                <h2>Środowisko Embedded</h2>
                 <img src="lib/img/autro.png" style="width: 50%">
                 <br>
                 ARM @ 400MHz + 64MB RAM + karta SD
