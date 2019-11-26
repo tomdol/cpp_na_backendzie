@@ -475,49 +475,7 @@ router.http_get("/books/:book_id", [](auto req, auto params) {
                 ARM @ 400MHz + 64MB RAM + karta SD
             </section>
         </section>
-        <section>
-            <section>
-                <h2>Wnioski</h2>
-                <ul>
-                    <li class="fragment">Nie pisać backendu w C++ <span class="fragment accent">(od zera i w całości)</span></li>
-                    <li class="fragment">Dokładnie określić wymagania</li>
-                    <li class="fragment">Zrobić proof of concept</li>
-                    <li class="fragment">Zmierzyć</li>
-                    <li class="fragment">Dopiero wtedy decydować</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Kiedy rozważyć C++?</h2>
-                <ul>
-                    <li class="fragment">Wydajność</li>
-                    <li class="fragment">Zużycie pamięci</li>
-                    <li class="fragment">Rozmiar</li>
-                    <li class="fragment">Platforma</li>
-                    <li class="fragment">Dostęp do sterowników, bibliotek, sytemu...</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Mieć ciastko i zjeść ciastko?</h2>
-                <ul>
-                    <li class="fragment">C++ bindings</li>
-                    <li class="fragment">"Wystawić" kod C++ do innego języka</li>
-                    <li class="fragment">Obsłużyć "Critical path" w C++</li>
-                    <li class="fragment accent">node.js -> N-API</li>
-                    <li class="fragment">Java -> JNI</li>
-                    <li class="fragment">Python -> pybind11</li>
-                </ul>
-            </section>
-            <section>
-                <h2>Przykłady backendów w C++</h2>
-                <div>
-                    <a href="https://github.com/openbmc/bmcweb"><span class="accent"><i class="fab fa-github-square"></i> openbmc/bmcweb</span></a> - crow + Boost.Beast
-                </div>
-                <br>
-                <div>
-                    <a href="https://github.com/intel/intelRSD"><span class="accent"><i class="fab fa-github-square"></i> intel/intelRSD</span></a> - microhttpd
-                </div>
-            </section>
-        </section>
+
         <section>
             <section>
                 <h2>C++ w chmurze</h2>
@@ -574,7 +532,7 @@ lambda_request_handler(const invocation_request& req)
 {
   // req.payload -> std::string
   if (req.payload.empty())
-    return invocation_response::failure("request payload empty",
+    return invocation_response::failure("empty request",
                                         "error_type");
   else
     return invocation_response::success("{ ... JSON ... }",
@@ -594,6 +552,50 @@ $ aws lambda create-function --function-name demo \
 $ aws lambda invoke --function-name demo \
   --payload '{"answer": 42}' output.txt
                 </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h2>Wnioski</h2>
+                <ul>
+                    <li class="fragment">Nie pisać backendu w C++ <span class="fragment accent">(od zera i w całości)</span></li>
+                    <li class="fragment">Dokładnie określić wymagania</li>
+                    <li class="fragment">Zrobić proof of concept</li>
+                    <li class="fragment">Zmierzyć</li>
+                    <li class="fragment">Dopiero wtedy decydować</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Kiedy rozważyć C++?</h2>
+                <ul>
+                    <li class="fragment">Wydajność</li>
+                    <li class="fragment">Zużycie pamięci</li>
+                    <li class="fragment">Rozmiar aplikacji</li>
+                    <li class="fragment">Platforma</li>
+                    <li class="fragment">Dostęp do sterowników, bibliotek, sytemu...</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Mieć ciastko i zjeść ciastko?</h2>
+                <ul>
+                    <li class="fragment">C++ bindings</li>
+                    <li class="fragment">"Wystawić" kod C++ do innego języka</li>
+                    <li class="fragment">Obsłużyć "Critical path" w C++</li>
+                    <li class="fragment accent">node.js -> N-API</li>
+                    <li class="fragment">Java -> JNI</li>
+                    <li class="fragment">Python -> pybind11</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Przykłady backendów w C++</h2>
+                <div>
+                    <a href="https://github.com/openbmc/bmcweb"><span class="accent"><i class="fab fa-github-square"></i> openbmc/bmcweb</span></a> - crow + Boost.Beast
+                </div>
+                <br>
+                <div>
+                    <a href="https://github.com/intel/intelRSD"><span class="accent"><i class="fab fa-github-square"></i> intel/intelRSD</span></a> - microhttpd
+                </div>
             </section>
         </section>
         <section>
