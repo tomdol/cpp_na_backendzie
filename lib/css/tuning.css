@@ -1,5 +1,6 @@
-.reveal { font-family: "Titillium Web" !important; font-weight: 300 !important; }
+.reveal { font-family: "Titillium Web" !important; font-weight: 300 !important; color: #CCCCCC !important}
 .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 { font-family: "Titillium Web" !important; font-weight: 200 !important; margin-bottom: .5em !important; }
+.reveal h2 { font-weight: 400 !important; color: #FFFFFF !important; }
 .reveal section img { border: none; background: none; box-shadow: none; }
 .accent { color: #e7ad52 !important; }
 .gray { color: #666 !important; }
@@ -11,4 +12,8 @@ ul { list-style-type: square !important; }
 .flex-center { display: flex; justify-content: center; align-items: center; }
 .flex-center > .loose {
     margin: 1em;
+}
+.slide-number {
+    background-color: #1A1A1A !important;
+    color: #777 !important;
 }
